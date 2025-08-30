@@ -1,0 +1,125 @@
++ set -e
++ echo '===== Starting VM Automation ====='
+===== Starting VM Automation =====
++ BASE_DIR=/home/aiysa/ebpf-lab
++ ISO_PATH=/home/aiysa/Downloads/ubuntu-22.04.5-live-server-amd64.iso
++ KERNEL_IMG=/home/aiysa/ebpf-lab/kernel/bzImage
++ NODE_COUNT=5
++ BRIDGE_NAME=br0
++ mkdir -p /home/aiysa/ebpf-lab/qemu-nodes
++ ip link show br0
++ echo '[+] Creating bridge br0'
+[+] Creating bridge br0
++ sudo ip link add name br0 type bridge
++ sudo ip link set br0 up
++ pgrep dnsmasq
++ echo '[✓] dnsmasq already running'
+[✓] dnsmasq already running
+++ seq 1 5
++ for i in $(seq 1 $NODE_COUNT)
++ NODE=node1
++ IMG_PATH=/home/aiysa/ebpf-lab/qemu-nodes/node1.img
++ TAP_IF=tap1
++ SEED_ISO=/home/aiysa/ebpf-lab/qemu-nodes/seed.iso
++ echo '[+] Regenerating seed.iso...'
+[+] Regenerating seed.iso...
++ sudo cloud-localds /home/aiysa/ebpf-lab/qemu-nodes/seed.iso /home/aiysa/ebpf-lab/cloud-init/user-data /home/aiysa/ebpf-lab/cloud-init/meta-data
++ echo '[+] Creating disk for node1'
+[+] Creating disk for node1
++ qemu-img create -f qcow2 /home/aiysa/ebpf-lab/qemu-nodes/node1.img 10G
+Formatting '/home/aiysa/ebpf-lab/qemu-nodes/node1.img', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=10737418240 lazy_refcounts=off refcount_bits=16
++ echo '[+] Handling TAP interface tap1'
+[+] Handling TAP interface tap1
++ ip link show tap1
++ sudo ip tuntap add dev tap1 mode tap
++ sudo ip link set tap1 master br0
++ sudo ip link set tap1 up
++ echo '[+] Launching VM node1...'
+[+] Launching VM node1...
++ qemu-system-x86_64 -m 2048 -smp 2 -hda /home/aiysa/ebpf-lab/qemu-nodes/node1.img -cdrom /home/aiysa/Downloads/ubuntu-22.04.5-live-server-amd64.iso -boot d -netdev tap,id=net1,ifname=tap1,script=no,downscript=no -device e1000,netdev=net1 -serial unix:/home/aiysa/ebpf-lab/qemu-nodes/node1.sock,server,nowait -daemonize
++ for i in $(seq 1 $NODE_COUNT)
++ NODE=node2
++ IMG_PATH=/home/aiysa/ebpf-lab/qemu-nodes/node2.img
++ TAP_IF=tap2
++ SEED_ISO=/home/aiysa/ebpf-lab/qemu-nodes/seed.iso
++ echo '[+] Regenerating seed.iso...'
+[+] Regenerating seed.iso...
++ sudo cloud-localds /home/aiysa/ebpf-lab/qemu-nodes/seed.iso /home/aiysa/ebpf-lab/cloud-init/user-data /home/aiysa/ebpf-lab/cloud-init/meta-data
++ echo '[+] Creating disk for node2'
+[+] Creating disk for node2
++ qemu-img create -f qcow2 /home/aiysa/ebpf-lab/qemu-nodes/node2.img 10G
+Formatting '/home/aiysa/ebpf-lab/qemu-nodes/node2.img', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=10737418240 lazy_refcounts=off refcount_bits=16
++ echo '[+] Handling TAP interface tap2'
+[+] Handling TAP interface tap2
++ ip link show tap2
++ sudo ip tuntap add dev tap2 mode tap
++ sudo ip link set tap2 master br0
++ sudo ip link set tap2 up
++ echo '[+] Launching VM node2...'
+[+] Launching VM node2...
++ qemu-system-x86_64 -m 2048 -smp 2 -hda /home/aiysa/ebpf-lab/qemu-nodes/node2.img -cdrom /home/aiysa/Downloads/ubuntu-22.04.5-live-server-amd64.iso -boot d -netdev tap,id=net2,ifname=tap2,script=no,downscript=no -device e1000,netdev=net2 -serial unix:/home/aiysa/ebpf-lab/qemu-nodes/node2.sock,server,nowait -daemonize
++ for i in $(seq 1 $NODE_COUNT)
++ NODE=node3
++ IMG_PATH=/home/aiysa/ebpf-lab/qemu-nodes/node3.img
++ TAP_IF=tap3
++ SEED_ISO=/home/aiysa/ebpf-lab/qemu-nodes/seed.iso
++ echo '[+] Regenerating seed.iso...'
+[+] Regenerating seed.iso...
++ sudo cloud-localds /home/aiysa/ebpf-lab/qemu-nodes/seed.iso /home/aiysa/ebpf-lab/cloud-init/user-data /home/aiysa/ebpf-lab/cloud-init/meta-data
++ echo '[+] Creating disk for node3'
+[+] Creating disk for node3
++ qemu-img create -f qcow2 /home/aiysa/ebpf-lab/qemu-nodes/node3.img 10G
+Formatting '/home/aiysa/ebpf-lab/qemu-nodes/node3.img', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=10737418240 lazy_refcounts=off refcount_bits=16
++ echo '[+] Handling TAP interface tap3'
+[+] Handling TAP interface tap3
++ ip link show tap3
++ sudo ip tuntap add dev tap3 mode tap
++ sudo ip link set tap3 master br0
++ sudo ip link set tap3 up
++ echo '[+] Launching VM node3...'
+[+] Launching VM node3...
++ qemu-system-x86_64 -m 2048 -smp 2 -hda /home/aiysa/ebpf-lab/qemu-nodes/node3.img -cdrom /home/aiysa/Downloads/ubuntu-22.04.5-live-server-amd64.iso -boot d -netdev tap,id=net3,ifname=tap3,script=no,downscript=no -device e1000,netdev=net3 -serial unix:/home/aiysa/ebpf-lab/qemu-nodes/node3.sock,server,nowait -daemonize
++ for i in $(seq 1 $NODE_COUNT)
++ NODE=node4
++ IMG_PATH=/home/aiysa/ebpf-lab/qemu-nodes/node4.img
++ TAP_IF=tap4
++ SEED_ISO=/home/aiysa/ebpf-lab/qemu-nodes/seed.iso
++ echo '[+] Regenerating seed.iso...'
+[+] Regenerating seed.iso...
++ sudo cloud-localds /home/aiysa/ebpf-lab/qemu-nodes/seed.iso /home/aiysa/ebpf-lab/cloud-init/user-data /home/aiysa/ebpf-lab/cloud-init/meta-data
++ echo '[+] Creating disk for node4'
+[+] Creating disk for node4
++ qemu-img create -f qcow2 /home/aiysa/ebpf-lab/qemu-nodes/node4.img 10G
+Formatting '/home/aiysa/ebpf-lab/qemu-nodes/node4.img', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=10737418240 lazy_refcounts=off refcount_bits=16
++ echo '[+] Handling TAP interface tap4'
+[+] Handling TAP interface tap4
++ ip link show tap4
++ sudo ip tuntap add dev tap4 mode tap
++ sudo ip link set tap4 master br0
++ sudo ip link set tap4 up
++ echo '[+] Launching VM node4...'
+[+] Launching VM node4...
++ qemu-system-x86_64 -m 2048 -smp 2 -hda /home/aiysa/ebpf-lab/qemu-nodes/node4.img -cdrom /home/aiysa/Downloads/ubuntu-22.04.5-live-server-amd64.iso -boot d -netdev tap,id=net4,ifname=tap4,script=no,downscript=no -device e1000,netdev=net4 -serial unix:/home/aiysa/ebpf-lab/qemu-nodes/node4.sock,server,nowait -daemonize
++ for i in $(seq 1 $NODE_COUNT)
++ NODE=node5
++ IMG_PATH=/home/aiysa/ebpf-lab/qemu-nodes/node5.img
++ TAP_IF=tap5
++ SEED_ISO=/home/aiysa/ebpf-lab/qemu-nodes/seed.iso
++ echo '[+] Regenerating seed.iso...'
+[+] Regenerating seed.iso...
++ sudo cloud-localds /home/aiysa/ebpf-lab/qemu-nodes/seed.iso /home/aiysa/ebpf-lab/cloud-init/user-data /home/aiysa/ebpf-lab/cloud-init/meta-data
++ echo '[+] Creating disk for node5'
+[+] Creating disk for node5
++ qemu-img create -f qcow2 /home/aiysa/ebpf-lab/qemu-nodes/node5.img 10G
+Formatting '/home/aiysa/ebpf-lab/qemu-nodes/node5.img', fmt=qcow2 cluster_size=65536 extended_l2=off compression_type=zlib size=10737418240 lazy_refcounts=off refcount_bits=16
++ echo '[+] Handling TAP interface tap5'
+[+] Handling TAP interface tap5
++ ip link show tap5
++ sudo ip tuntap add dev tap5 mode tap
++ sudo ip link set tap5 master br0
++ sudo ip link set tap5 up
++ echo '[+] Launching VM node5...'
+[+] Launching VM node5...
++ qemu-system-x86_64 -m 2048 -smp 2 -hda /home/aiysa/ebpf-lab/qemu-nodes/node5.img -cdrom /home/aiysa/Downloads/ubuntu-22.04.5-live-server-amd64.iso -boot d -netdev tap,id=net5,ifname=tap5,script=no,downscript=no -device e1000,netdev=net5 -serial unix:/home/aiysa/ebpf-lab/qemu-nodes/node5.sock,server,nowait -daemonize
++ echo '===== All VMs Launched ====='
+===== All VMs Launched =====
